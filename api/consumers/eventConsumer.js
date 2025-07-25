@@ -1,32 +1,39 @@
-import dotenv from "dotenv";
-import Event from "../models/Event.js";
-import connectMongo from "../config/connectMongo.js";
 import { connectRabbitMQ, getChannel } from "../config/connectRabbit.js";
-
-dotenv.config({ path: "./config.env" });
+import pool from "../config/connectPostgres.js";
 
 const startConsumer = async () => {
   try {
-    await connectMongo();
     await connectRabbitMQ();
     const channel = getChannel();
+    await channel.prefetch(10);
 
-    console.log(" waiting...");
+    console.log("Listening for messages...");
 
     channel.consume("events", async (msg) => {
-      if (msg !== null) {
-        try {
-          const data = JSON.parse(msg.content.toString());
-          await Event.create(data);
-          console.log("message saved", data);
-          channel.ack(msg);
-        } catch (err) {
-          console.error("saving message error", err);
-        }
+      if (!msg) return;
+
+      try {
+        const { title, description } = JSON.parse(msg.content.toString());
+        const res = await pool.query(
+          "INSERT INTO events(title, description) VALUES($1, $2) RETURNING *",
+          [title, description]
+        );
+
+        console.log("💾 Saved event:", res.rows[0].id);
+        channel.ack(msg);
+      } catch (err) {
+        console.error("Error processing message:", err);
+        channel.nack(msg, false, false);
       }
     });
+
+    process.on("SIGINT", async () => {
+      console.log("Shutting down gracefully...");
+      await channel.close();
+      process.exit(0);
+    });
   } catch (err) {
-    console.error("consumer error", err);
+    console.error("Fatal consumer error:", err);
     process.exit(1);
   }
 };

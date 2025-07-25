@@ -9,6 +9,6 @@ const createUserValidation=[
     body('description').notEmpty().withMessage('توضسحات نباید خالی باشد'),
 ]
 
-eventRouter.post('/events', checkValidation,createEvent);
+eventRouter.post('/', checkValidation,createEvent);
 
 export default eventRouter;
