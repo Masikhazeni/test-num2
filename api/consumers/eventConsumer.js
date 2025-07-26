@@ -1,41 +1,57 @@
-import { connectRabbitMQ, getChannel } from "../config/connectRabbit.js";
-import pool from "../config/connectPostgres.js";
+import mongoose from 'mongoose';
+import { getChannel, connectRabbit } from '../config/rabbitmq.js';
+import { query } from '../config/connectPostgres.js';
+import Event from '../models/eventModel.js';
+import connectMongo from '../config/connectMongo.js';
 
-const startConsumer = async () => {
+const mongoConnect = async () => {
   try {
-    await connectRabbitMQ();
-    const channel = getChannel();
-    await channel.prefetch(10);
-
-    console.log("Listening for messages...");
-
-    channel.consume("events", async (msg) => {
-      if (!msg) return;
-
-      try {
-        const { title, description } = JSON.parse(msg.content.toString());
-        const res = await pool.query(
-          "INSERT INTO events(title, description) VALUES($1, $2) RETURNING *",
-          [title, description]
-        );
-
-        console.log("💾 Saved event:", res.rows[0].id);
-        channel.ack(msg);
-      } catch (err) {
-        console.error("Error processing message:", err);
-        channel.nack(msg, false, false);
-      }
+    await mongoose.connect('mongodb://localhost:27017/event-db', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
     });
-
-    process.on("SIGINT", async () => {
-      console.log("Shutting down gracefully...");
-      await channel.close();
-      process.exit(0);
-    });
+    console.log('MongoDB connected');
   } catch (err) {
-    console.error("Fatal consumer error:", err);
-    process.exit(1);
+    console.error('MongoDB connection failed:', err.message);
+    process.exit(1); 
   }
 };
 
-startConsumer();
+const processMessage = async (msg) => {
+  const channel = getChannel();
+  
+  try {
+    const data = JSON.parse(msg.content.toString());
+
+    const pgResult = await query(
+      'INSERT INTO events(title, description) VALUES($1, $2) RETURNING id',
+      [data.title, data.description]
+    );
+    console.log(pgResult.rows[0]);
+
+    await Event.create({
+      title: data.title,
+      description: data.description,
+      pg_id: pgResult.rows[0].id
+    });
+
+    channel.ack(msg);
+    console.log('Processed:', data.title);
+
+  } catch (err) {
+    console.error('Error:', err.message);
+    channel.nack(msg, false, true);
+  }
+};
+
+const startConsumer = async () => {
+  await connectRabbit();
+  const channel = getChannel();
+  channel.consume('events', processMessage);
+  console.log('Consumer started');
+};
+
+(async () => {
+  await mongoConnect();
+  await startConsumer();
+})()

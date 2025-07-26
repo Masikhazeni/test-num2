@@ -1,17 +1,21 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const eventSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: [true, "عنوان الزامی است"],
+    required: true,
     trim: true,
+    maxlength: 255
   },
   description: {
     type: String,
-    required: [true, "توضیحات الزامی است"],
-    trim: true,
+    required: true
   },
+  pg_id: {
+    type: Number,
+    required: true,
+    index: true
+  }
 }, { timestamps: true });
 
-const Event = mongoose.model('Event', eventSchema);
-export default Event;
+export default mongoose.model('Event', eventSchema);

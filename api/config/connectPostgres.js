@@ -1,31 +1,45 @@
 import pg from 'pg';
-import dotenv from 'dotenv';
-
-dotenv.config({ path: './config.env' });
 
 const { Pool } = pg;
-
-const pool = new Pool({
-  host: process.env.PGHOST,
-  user: process.env.PGUSER,
-  password: String(process.env.PGPASSWORD),
-  database: process.env.PGDATABASE,
-  port: process.env.PGPORT,
-  ssl: false,
-  max: 20, 
+const dbConfig = {
+  host: 'localhost',      // آدرس سرور PostgreSQL
+  user: 'dp_user',        // نام کاربری
+  password: '123456',     // رمز عبور
+  database: 'datapipeline', // نام دیتابیس
+  port: 5432,             // پورت پیش‌فرض
+  max: 10,                // حداکثر اتصال همزمان
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-});
+  connectionTimeoutMillis: 2000
+};
+const validateConfig = (config) => {
+  const required = ['host', 'user', 'password', 'database', 'port'];
+  required.forEach(field => {
+    if (!config[field]) throw new Error(`Missing database ${field} configuration`);
+  });
+};
 
-export const connectPostgres = async () => {
+validateConfig(dbConfig);
+
+const pool = new Pool(dbConfig);
+export const query = async (text, params) => {
+  let client;
   try {
-    await pool.connect();
-    console.log('✅ PostgreSQL connected');
-    return pool;
+    client = await pool.connect();
+    const result = await client.query(text, params);
+    return result;
   } catch (err) {
-    console.error('❌ PostgreSQL connection error:', err);
-    process.exit(1);
+    console.error('Query failed:', {
+      query: text,
+      params: params,
+      error: err.message
+    });
+    throw err;
+  } finally {
+    if (client) client.release();
   }
 };
 
-export default pool;
+pool.on('connect', () => console.log('New DB connection'));
+pool.on('error', (err) => console.error('Pool error:', err));
+
+process.on('exit', () => pool.end());
