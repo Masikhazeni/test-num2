@@ -6,6 +6,9 @@ class CacheService {
     await redis.set(`event:${eventId}`, JSON.stringify(data), { EX: ttl });
   }
 
+  async publishEvent(data) {
+  await redis.publish("events", JSON.stringify(data));
+}
   // دریافت رویداد از کش
   async getEvent(eventId) {
     const data = await redis.get(`event:${eventId}`);
