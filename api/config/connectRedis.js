@@ -3,18 +3,18 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const redisSubscriber = createClient({
+const redisClient = createClient({
   url: process.env.REDIS_URL
 });
 
-redisSubscriber.on('error', (err) => {
+redisClient.on('error', (err) => {
   console.error('Redis Error:', err);
 });
 
 const connectRedis = async () => {
   try {
-    if (!redisSubscriber.isOpen) {
-      await redisSubscriber.connect();
+    if (!redisClient.isOpen) {
+      await redisClient.connect();
       console.log('Redis Subscriber connected');
     }
   } catch (err) {
@@ -23,4 +23,4 @@ const connectRedis = async () => {
   }
 };
 
-export { redisSubscriber, connectRedis };
+export { redisClient, connectRedis };

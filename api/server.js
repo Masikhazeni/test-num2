@@ -35,7 +35,7 @@
 import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { redisSubscriber, connectRedis } from './config/connectRedis.js';
+import { redisClient, connectRedis } from './config/connectRedis.js';
 import socketHandler from './sockets/socketHandler.js';
 import dotenv from 'dotenv';
 
@@ -57,7 +57,7 @@ socketHandler(io);
 const startServer = async () => {
   await connectRedis();
 
-  await redisSubscriber.subscribe('events', (message) => {
+  await redisClient.subscribe('events', (message) => {
     const data = JSON.parse(message);
     console.log('New Event received from Redis:', data);
 

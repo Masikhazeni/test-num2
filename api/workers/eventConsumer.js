@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { getChannel, connectRabbit } from "../config/rabbitmq.js";
 import { query } from "../config/connectPostgres.js";
 import Event from "../models/eventModel.js";
-import redisClient from "../config/connectRedis.js";
+import {redisClient} from "../config/connectRedis.js";
 
 const mongoConnect = async () => {
   try {
@@ -37,6 +37,24 @@ const processMessage = async (msg) => {
 
     channel.ack(msg);
     console.log("Processed:", data.title);
+
+      // پاک کردن کش لیست ایونت‌ها (در صورت وجود)
+    await redisClient.del("events:all");
+
+    // پاک کردن کش ایونت تکی (در صورت وجود)
+    const eventKey = `event:${pgId}`;
+    await redisClient.del(eventKey);
+
+    await redisClient.set(
+      `event:${pgResult.rows[0].id}`, // key
+      JSON.stringify({
+        title: data.title,
+        description: data.description,
+        pg_id: pgResult.rows[0].id,
+        timestamp: new Date(),
+      }),
+      { EX: 3600 } // expire after 1 hour (اختیاری)
+    );
 
     await redisClient.publish(
       "events",
