@@ -5,10 +5,6 @@ import Event from '../models/eventModel.js'
 export const createEvent = async (req, res) => {
   try {
     const { title, description } = req.body;
-    if (!title || !description) {
-      return res.status(400).json({ error: 'Title and description are required' });
-    }
-
     await publishToQueue({ title, description });
     
     res.status(202).json({ 

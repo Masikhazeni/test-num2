@@ -32,16 +32,18 @@
 
 
 
-import express from 'express';
+import app from './app.js'
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { redisClient, connectRedis } from './config/connectRedis.js';
 import socketHandler from './sockets/socketHandler.js';
 import dotenv from 'dotenv';
+import { __dirname } from './app.js';
+import './main.js'
 
-dotenv.config();
+dotenv.config({path:`${__dirname}/config.env`})
 
-const app = express();
+
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
@@ -65,7 +67,8 @@ const startServer = async () => {
     io.emit('new-event', data);
   });
 
-  const PORT = process.env.PORT || 4000;
+  const PORT = process.env.PORT 
+  console.log(PORT)
   server.listen(PORT, () => {
     console.log(`Real-time Service running on port ${PORT}`);
   });

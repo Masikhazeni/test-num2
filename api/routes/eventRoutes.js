@@ -1,8 +1,7 @@
 import express from 'express';
-import { createEvent } from '../controllers/eventControllers.js';
-import { body } from 'express-validator';
+import { createEvent,getEventById } from '../controllers/eventControllers.js';
+import { body, param } from 'express-validator';
 import checkValidation from '../Middleware/checkValidation.js';
-import { getEventById } from '../controllers/getEventController.js';
 
 const eventRouter = express.Router();
 const createEventValidation=[
