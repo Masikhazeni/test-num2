@@ -96,6 +96,7 @@ http://localhost:15672
 Username: guest
 
 Password: guest
+
 پس از راه انداز یمیتوانید مطابق کد های موجود در  rabittmq.js و همینطور در پوشه service صفحه queue.js مشاهده کنید.
 اول کانکشن برقرار می‌شود
 
