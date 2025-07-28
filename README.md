@@ -44,18 +44,31 @@ RabbitMQ نسخه 3.8+
 8. روی Next کلیک کنید تا نصب کامل شود
 
 مرحله 2: تنظیم اولیه PostgreSQL
+
 پس از نصب کامل، CMD را به عنوان Administrator باز کنید و دستورات زیر را وارد کنید:
+
 cd C:\Program Files\PostgreSQL\14\bin
+
 psql -U postgres -c "CREATE USER dp_user WITH PASSWORD '123456';"
+
 psql -U postgres -c "CREATE DATABASE datapipeline OWNER dp_user;"
+
 psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE datapipeline TO dp_user;"
-مرحله 3: راه‌اندازی سرویس 
+
+مرحله 3: راه‌اندازی سرویس
+
 sc query postgresql-x64-14
+
 سپس
+
 net stop postgresql-x64-14
+
 net start postgresql-x64-14
+
 #راهنمای راه اندازی Mongodb:
+
 پس از نصب و راه اندازی نرم افزار وارد برنامه شوید :
+
 روی Create Database کلیک کنید
 
 نام دیتابیس را event-db وارد کنید
