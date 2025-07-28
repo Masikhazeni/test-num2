@@ -83,7 +83,9 @@ import { connectPostgres } from "../config/connectPostgres.js"; // اضافه ش
 import { connectRedis } from "../config/connectRedis.js";       // اضافه شد
 import { query } from "../config/connectPostgres.js";
 import Event from "../models/eventModel.js";
-import CacheService from '../services/cacheService.js';
+import { CacheService } from "../services/cacheService.js";
+
+const cacheService = new CacheService();
 
 const connectMongo = async () => {
   try {
@@ -120,17 +122,17 @@ const processMessage = async (msg) => {
     channel.ack(msg);
     console.log("✅ Processed:", data.title);
 
-    await CacheService.invalidateEvent("all");
-    await CacheService.invalidateEvent(pgId);
+    await cacheService.invalidateEvent("all");
+    await cacheService.invalidateEvent(pgId);
 
-    await CacheService.cacheEvent(pgId, {
+    await cacheService.cacheEvent(pgId, {
       title: data.title,
       description: data.description,
       pg_id: pgId,
       timestamp: new Date(),
     });
 
-    await CacheService.publishEvent({
+    await cacheService.publishEvent({
       title: data.title,
       description: data.description,
       pg_id: pgId,

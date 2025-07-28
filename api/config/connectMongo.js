@@ -12,4 +12,5 @@ const connectMongo = async () => {
     process.exit(1);
   }
 };
+
 export default connectMongo;
