@@ -5,6 +5,8 @@ import connectMongo from './config/connectMongo.js';
 import dotenv from 'dotenv';
 import { __dirname } from './app.js';
 import './server.js'
+const envFile = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
+dotenv.config({ path: envFile });
 
 dotenv.config({path:`${__dirname}/config.env`})
 

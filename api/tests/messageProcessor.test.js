@@ -1,47 +1,3 @@
-// import { expect } from "chai";
-// import sinon from "sinon";
-// import { processData } from "../services/messageProcessor.js";
-
-// describe("processData", () => {
-//   let queryStub, eventCreateStub, cacheServiceStub;
-
-//   beforeEach(() => {
-//     queryStub = sinon.stub().resolves({ rows: [{ id: 123 }] });
-
-//     eventCreateStub = sinon.stub().resolves();
-
-//     cacheServiceStub = {
-//       invalidateEvent: sinon.stub().resolves(),
-//       cacheEvent: sinon.stub().resolves(),
-//       publishEvent: sinon.stub().resolves(),
-//     };
-//   });
-
-//   it("should retrn id", async () => {
-//     const input = { title: "Test Event", description: "A test description" };
-
-//     const pgId = await processData(input, {
-//       query: queryStub,
-//       Event: { create: eventCreateStub },
-//       CacheService: cacheServiceStub,
-//     });
-
-//     expect(pgId).to.equal(123);
-//     expect(queryStub.calledOnce).to.be.true;
-//     expect(eventCreateStub.calledOnceWith({
-//       title: input.title,
-//       description: input.description,
-//       pg_id: 123,
-//     })).to.be.true;
-//     expect(cacheServiceStub.invalidateEvent.calledWith("all")).to.be.true;
-//     expect(cacheServiceStub.invalidateEvent.calledWith(123)).to.be.true;
-//     expect(cacheServiceStub.cacheEvent.calledOnce).to.be.true;
-//     expect(cacheServiceStub.publishEvent.calledOnce).to.be.true;
-//   });
-// });
-
-
-
 import { expect } from "chai";
 import sinon from "sinon";
 import { processData } from "../services/messageProcessor.js";
@@ -151,3 +107,4 @@ describe("processData", () => {
 });
 
 
+  // "test": "mocha tests/**/*.test.js --timeout 10000",

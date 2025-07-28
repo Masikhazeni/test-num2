@@ -1,6 +1,7 @@
 import pg from 'pg';
+import { Pool } from 'pg';
 
-const { Pool } = pg;
+// const { Pool } = pg;
 
 const dbConfig = {
   host: 'localhost',

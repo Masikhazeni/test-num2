@@ -1,3 +1,4 @@
+// queue.js
 import { getChannel } from '../config/rabbitmq.js';
 
 export const publishToQueue = async (data) => {
