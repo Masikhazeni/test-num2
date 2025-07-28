@@ -182,7 +182,7 @@ Password: guest
 جهت ارسال داده و تست میتوانید از POST http://localhost:5000/api/events استفاده کنید.
 
 #تست:
-برای قسمت worker(processMessage) با استفاده از Mocha/Chai تست نویسی بر میتای unit test انجام شده ک با استفاده از کد npm tetsدر ترمینال نتایج قایل مشاهده خواد بود.
+برای قسمت worker(processMessage) با استفاده از Mocha/Chai تست نویسی بر مینای unit test انجام شده ک با استفاده از کد npm tetsدر ترمینال نتایج قابل مشاهده خواهد بود.
 
 
 
