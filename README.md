@@ -99,8 +99,11 @@ Create را بزنید
 
 دستورات زیر را وارد کنید:
 rabbitmq-plugins enable rabbitmq_management
+
 rabbitmq-service start
+
 دسترسی به پنل مدیریت:
+
 مرورگر خود را باز کنید و به آدرس زیر بروید:
 
 
