@@ -2,9 +2,10 @@
   "name": "api",
   "version": "1.0.0",
   "main": "server.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
-  "test": "mocha tests/**/*.test.js --timeout 10000",
+    "test": "cross-env NODE_ENV=test mocha --recursive --timeout 10000",
+    "test:worker": "cross-env NODE_ENV=test mocha test/messageProcessor.test.js --timeout 10000",
     "dev": "nodemon server.js",
     "consumer": "node workers/eventConsumer.js"
   },

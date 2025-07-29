@@ -1,6 +1,6 @@
-import { expect } from "chai";
-import sinon from "sinon";
-import { processData } from "../services/messageProcessor.js";
+const { expect } = require("chai");
+const sinon = require("sinon");
+const { processData } = require("../services/messageProcessor");
 
 describe("processData", () => {
   let queryStub, eventCreateStub, cacheServiceStub;
@@ -80,17 +80,30 @@ describe("processData", () => {
   });
 
   it("should throw if title is missing", async () => {
-  try {
-    await processData({ description: "no title" }, {
-      query: queryStub,
-      Event: { create: eventCreateStub },
-      CacheService: cacheServiceStub,
-    });
-    throw new Error("Should not reach here");
-  } catch (err) {
-    expect(err).to.exist;
-  }
-})
+    try {
+      await processData({ description: "no title" }, {
+        query: queryStub,
+        Event: { create: eventCreateStub },
+        CacheService: cacheServiceStub,
+      });
+      throw new Error("Should not reach here");
+    } catch (err) {
+      expect(err).to.exist;
+    }
+  });
+
+  it("should throw if description is missing", async () => {
+    try {
+      await processData({ title: "no description" }, {
+        query: queryStub,
+        Event: { create: eventCreateStub },
+        CacheService: cacheServiceStub,
+      });
+      throw new Error("Should not reach here");
+    } catch (err) {
+      expect(err).to.exist;
+    }
+  });
 
   it("should throw if input is null", async () => {
     try {
@@ -105,6 +118,3 @@ describe("processData", () => {
     }
   });
 });
-
-
-  // "test": "mocha tests/**/*.test.js --timeout 10000",
