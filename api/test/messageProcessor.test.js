@@ -38,11 +38,14 @@ describe("processData", () => {
     queryStub.rejects(new Error("Database error"));
 
     try {
-      await processData({ title: "T", description: "D" }, {
-        query: queryStub,
-        Event: { create: eventCreateStub },
-        CacheService: cacheServiceStub,
-      });
+      await processData(
+        { title: "T", description: "D" },
+        {
+          query: queryStub,
+          Event: { create: eventCreateStub },
+          CacheService: cacheServiceStub,
+        }
+      );
       throw new Error("Should not reach here");
     } catch (err) {
       expect(err.message).to.equal("Database error");
@@ -53,11 +56,14 @@ describe("processData", () => {
     eventCreateStub.rejects(new Error("MongoDB error"));
 
     try {
-      await processData({ title: "T", description: "D" }, {
-        query: queryStub,
-        Event: { create: eventCreateStub },
-        CacheService: cacheServiceStub,
-      });
+      await processData(
+        { title: "T", description: "D" },
+        {
+          query: queryStub,
+          Event: { create: eventCreateStub },
+          CacheService: cacheServiceStub,
+        }
+      );
       throw new Error("Should not reach here");
     } catch (err) {
       expect(err.message).to.equal("MongoDB error");
@@ -68,11 +74,14 @@ describe("processData", () => {
     cacheServiceStub.cacheEvent.rejects(new Error("Cache error"));
 
     try {
-      await processData({ title: "T", description: "D" }, {
-        query: queryStub,
-        Event: { create: eventCreateStub },
-        CacheService: cacheServiceStub,
-      });
+      await processData(
+        { title: "T", description: "D" },
+        {
+          query: queryStub,
+          Event: { create: eventCreateStub },
+          CacheService: cacheServiceStub,
+        }
+      );
       throw new Error("Should not reach here");
     } catch (err) {
       expect(err.message).to.equal("Cache error");
@@ -81,11 +90,14 @@ describe("processData", () => {
 
   it("should throw if title is missing", async () => {
     try {
-      await processData({ description: "no title" }, {
-        query: queryStub,
-        Event: { create: eventCreateStub },
-        CacheService: cacheServiceStub,
-      });
+      await processData(
+        { description: "no title" },
+        {
+          query: queryStub,
+          Event: { create: eventCreateStub },
+          CacheService: cacheServiceStub,
+        }
+      );
       throw new Error("Should not reach here");
     } catch (err) {
       expect(err).to.exist;
@@ -94,11 +106,14 @@ describe("processData", () => {
 
   it("should throw if description is missing", async () => {
     try {
-      await processData({ title: "no description" }, {
-        query: queryStub,
-        Event: { create: eventCreateStub },
-        CacheService: cacheServiceStub,
-      });
+      await processData(
+        { title: "no description" },
+        {
+          query: queryStub,
+          Event: { create: eventCreateStub },
+          CacheService: cacheServiceStub,
+        }
+      );
       throw new Error("Should not reach here");
     } catch (err) {
       expect(err).to.exist;

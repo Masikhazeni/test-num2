@@ -14,4 +14,3 @@ const connectMongo = async () => {
 };
 
 module.exports = connectMongo;
-
