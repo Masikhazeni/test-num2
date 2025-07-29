@@ -182,6 +182,7 @@ Password: guest
 جهت ارسال داده و تست میتوانید از POST http://localhost:5000/api/events استفاده کنید.
 
 #تست:
+
 برای قسمت worker(processMessage) با استفاده از Mocha/Chai تست نویسی بر مینای unit test انجام شده ک با استفاده از کد npm run test:worker در ترمینال نتایج قابل مشاهده خواهد بود.
 برای قسمت API Gataway، integration test طراحی شده ک با کد دستوری npm test راه اندازی شده و قابل مشاهده است.
 
