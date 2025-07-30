@@ -142,9 +142,7 @@ Password: guest
 
 آپدیت Redis Cache
 
-انتشار رویداد برای Real-time Service
-
-📌 Real-time Service (Socket.IO)
+انتشار رویداد برای Real-time Service Real-time Service (Socket.IO)
 وظیفه: ارسال لحظه‌ای نوتیفیکیشن به کاربران
 
 مکانیسم:
