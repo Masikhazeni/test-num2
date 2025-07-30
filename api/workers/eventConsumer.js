@@ -4,7 +4,6 @@ const { connectPostgres, query } = require("../config/connectPostgres");
 const { connectRedis } = require("../config/connectRedis");
 const Event = require("../models/eventModel");
 const { CacheService } = require("../services/cacheService");
-
 const cacheService = new CacheService();
 
 const connectMongo = async () => {
@@ -46,10 +45,10 @@ const processMessage = async (msg) => {
     await cacheService.invalidateEvent(pgId);
 
     await cacheService.cacheEvent(pgId, {
-      title: data.title,
-      description: data.description,
-      pg_id: pgId,
-      timestamp: new Date(),
+title: data.title,
+description: data.description,
+pg_id: pgId,
+timestamp: new Date(),
     });
 
     await cacheService.publishEvent({
@@ -79,3 +78,4 @@ const startConsumer = async () => {
   await connectMongo();
   await startConsumer();
 })();
+
