@@ -143,6 +143,7 @@ Password: guest
 آپدیت Redis Cache
 
 انتشار رویداد برای Real-time Service Real-time Service (Socket.IO)
+
 وظیفه: ارسال لحظه‌ای نوتیفیکیشن به کاربران
 
 مکانیسم:
@@ -153,8 +154,11 @@ Password: guest
 
 
 #راه‌اندازی سرویس‌ها (در دو ترمینال جداگانه):
+
 در ترمینال اول : npm run dev
+
 در ترمینال دوم:npm run consumer
+
 جهت ارسال داده و تست میتوانید از POST http://localhost:5000/api/events استفاده کنید.
 
 #تست:
