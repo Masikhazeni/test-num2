@@ -56,8 +56,6 @@ const getEventById = async (req, res) => {
         data: JSON.parse(cached),
         message: "Cache HIT - Served from Redis",
       });
-    } else {
-      console.log("Cache MISS - Fetching from DBs");
     }
 
     await redisClient.set(redisKey, JSON.stringify(eventFromMongo), { EX: 3600 });
