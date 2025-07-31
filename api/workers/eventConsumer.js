@@ -8,7 +8,7 @@ const cacheService = new CacheService();
 
 const connectMongo = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27017/event-db", {
+    await mongoose.connect("mongodb://localhost:27017/events", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
@@ -25,36 +25,29 @@ const processMessage = async (msg) => {
   try {
     const data = JSON.parse(msg.content.toString());
 
-    const pgResult = await query(
-      "INSERT INTO events(title, description) VALUES($1, $2) RETURNING id",
-      [data.title, data.description]
-    );
-
-    const pgId = pgResult.rows[0].id;
-
-    await Event.create({
-      title: data.title,
-      description: data.description,
-      pg_id: pgId,
+    savedEvent=await Event.create({
+      temperature: data.temperature,
+      humidity: data.humidity,
+      user_id: data.user_id,
+      device_id: data.device_id,
     });
 
     channel.ack(msg);
-    console.log("Processed:", data.title);
-
-    await cacheService.invalidateEvent("all");
-    await cacheService.invalidateEvent(pgId);
-
-    await cacheService.cacheEvent(pgId, {
-title: data.title,
-description: data.description,
-pg_id: pgId,
+    console.log("Processed:",data);
+      const mongoId=savedEvent._id
+    await cacheService.cacheEvent(mongoId, {
+ temperature: data.temperature,
+      humidity: data.humidity,
+      user_id: data.user_id,
+      device_id: data.device_id,
 timestamp: new Date(),
     });
 
     await cacheService.publishEvent({
-      title: data.title,
-      description: data.description,
-      pg_id: pgId,
+     temperature: data.temperature,
+      humidity: data.humidity,
+      user_id: data.user_id,
+      device_id: data.device_id,
       timestamp: new Date(),
     });
 

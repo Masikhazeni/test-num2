@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Real-time Test</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+  <h2>📡 Real-time Event Listener</h2>
+  <pre id="output">Waiting for data...</pre>
+
+  <script>
+    const socket = io("http://localhost:5000"); // آدرس سوکت‌ات
+
+    const userId = 1; // اینو با user_id که در POST می‌فرستی یکی کن
+
+    socket.on("connect", () => {
+      console.log("Connected to server via Socket.io");
+      socket.emit("register", userId); 
+    });
+
+    socket.on("device-event", (data) => {
+      console.log(" Event received:", data);
+      document.getElementById("output").textContent += "\n" + JSON.stringify(data, null, 2);
+    });
+  </script>
+</body>
+</html>

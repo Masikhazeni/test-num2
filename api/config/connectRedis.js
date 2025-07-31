@@ -1,32 +1,37 @@
 const { createClient } = require("redis");
-const dotenv = require("dotenv");
-const path = require("path");
-dotenv.config({ path: path.join(__dirname, "../config.env") });
 
-const redisClient = createClient({
-  url: process.env.REDIS_URL,
-});
+const redisClient = createClient();
+const redisSubscriber = createClient();
 
-redisClient.on("error", (err) => {
-  console.error("Redis Error:", err);
-});
+let isConnected = false;
 
 const connectRedis = async () => {
+  if (isConnected) return; 
+
   try {
     if (!redisClient.isOpen) {
       await redisClient.connect();
-      console.log("Redis connected successfully");
+      console.log("Redis client connected (commands)");
     }
-  } catch (err) {
-    console.error("Redis connection failed:", err);
+
+    if (!redisSubscriber.isOpen) {
+      await redisSubscriber.connect();
+      console.log("Redis subscriber connected (pub/sub)");
+    }
+
+    isConnected = true;
+  } catch (error) {
+    console.error("Redis connection failed:", error.message);
     process.exit(1);
   }
 };
 
 module.exports = {
   redisClient,
+  redisSubscriber,
   connectRedis,
 };
+
 
 
 

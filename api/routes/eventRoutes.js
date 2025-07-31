@@ -9,8 +9,18 @@ const checkValidation = require("../Middleware/checkValidation");
 const eventRouter = express.Router();
 
 const createEventValidation = [
-  body("title").notEmpty().withMessage("عنوان نباید خالی باشد"),
-  body("description").notEmpty().withMessage("توضیحات نباید خالی باشد"),
+  body("humidity").notEmpty().withMessage("مقدار رطوبت نباید خالی باشد").bail()
+  .isNumeric().withMessage("رطوبت باید یک عدد باشد"),
+
+  body("temperature").notEmpty().withMessage("مقدار دما نباید خالی باشد").bail()
+  .isNumeric().withMessage("دما باید یک عدد باشد"),
+  
+  
+  body("user_id").notEmpty().withMessage("مقدار شماره کاربری نباید خالی باشد").bail()
+  .isNumeric().withMessage("شماره کاربری باید یک عدد باشد"),
+  
+  body("device_id").notEmpty().withMessage("سریال دستگاه دما نباید خالی باشد").bail()
+  .isNumeric().withMessage("سریال دستگاه باید یک عدد باشد"),
 ];
 
 const getEventValidation = [

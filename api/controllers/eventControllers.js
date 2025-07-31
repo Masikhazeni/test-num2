@@ -5,21 +5,45 @@ const { query } = require("../config/connectPostgres.js");
 
 const createEvent = async (req, res) => {
   try {
-    const { title, description } = req.body;
-    await publishToQueue({ title, description });
+    const { temperature, humidity, user_id, device_id } = req.body;
+    const checkDeviceQuery = `
+      SELECT id FROM devices
+      WHERE id = $1 AND user_id = $2
+      LIMIT 1;
+    `;
+    const { rows } = await query(checkDeviceQuery, [device_id, user_id]);
 
-    res.status(202).json({
+    if (rows.length === 0) {
+      return res.status(400).json({
+        status: "error",
+        message: "No device found for the given user_id and device_id",
+      });
+    }
+    await publishToQueue({ temperature, humidity, user_id, device_id });
+
+    return res.status(202).json({
       status: "queued",
       message: "Event is being processed",
     });
   } catch (err) {
     console.error("Controller error:", err);
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
   }
 };
 
 const getEventById = async (req, res) => {
   const { id } = req.params;
+
+  const eventFromMongo = await Event.findById(id)
+  if(!eventFromMongo){
+    return res.status(404).json({
+      success:false,
+      message:'not-existent'
+    })
+  }
   const redisKey = `event:${id}`;
 
   try {
@@ -36,36 +60,11 @@ const getEventById = async (req, res) => {
       console.log("Cache MISS - Fetching from DBs");
     }
 
-    const pgResult = await query(
-      "SELECT id, title, description FROM events WHERE id = $1",
-      [id]
-    );
-
-    if (pgResult.rows.length === 0) {
-      return res.status(404).json({ success: false, message: "not found" });
-    }
-
-    const eventFromPG = pgResult.rows[0];
-    const eventFromMongo = await Event.findOne({
-      pg_id: eventFromPG.id,
-    }).lean();
-
-    if (!eventFromMongo) {
-      console.warn("MongoDB record not found for pg_id:", eventFromPG.id);
-    }
-
-    const fullEvent = {
-      ...eventFromPG,
-      mongo_id: eventFromMongo?._id || null,
-      createdAt: eventFromMongo?.createdAt || null,
-      updatedAt: eventFromMongo?.updatedAt || null,
-    };
-
-    await redisClient.set(redisKey, JSON.stringify(fullEvent), { EX: 3600 });
+    await redisClient.set(redisKey, JSON.stringify(eventFromMongo), { EX: 3600 });
     console.log("Stored in Redis:", redisKey);
     res.status(200).json({
       success: true,
-      data: fullEvent,
+      data: eventFromMongo,
       message: "saved from postgreSQL, MongoDB",
     });
   } catch (err) {
