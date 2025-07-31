@@ -2,7 +2,7 @@ const app = require("./app.js");
 require("./main.js");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
-const { redisSubscriber, redisClient, connectRedis } = require("./config/connectRedis.js"); // دقت کن redisClient هم ایمپورت شده
+const { redisSubscriber, redisClient, connectRedis } = require("./config/connectRedis.js"); 
 const socketHandler = require("./sockets/socketHandler.js");
 
 const server = createServer(app);

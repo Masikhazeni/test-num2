@@ -51,7 +51,7 @@ timestamp: new Date(),
       timestamp: new Date(),
     });
 
-    console.log("Published to Redis:", data.title);
+    console.log("Published to Redis");
   } catch (err) {
     console.error("Error processing message:", err.message);
     channel.nack(msg, false, true);
