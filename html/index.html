@@ -15,18 +15,17 @@
   <pre id="output">در انتظار داده‌ها...</pre>
 
   <script>
-    const socket = io("http://localhost:5000"); // آدرس سرور ساکت
+    const socket = io("http://localhost:5000"); 
 
-    const userId = 1; // مقدار باید با user_id واقعی تطابق داشته باشد
+    const userId = 1; 
 
     socket.on("connect", () => {
-      console.log("✅ Connected to server via Socket.io");
-      socket.emit("register", userId); // ارسال userId برای ثبت‌نام در Redis
+      console.log("Connected to server via Socket.io");
+      socket.emit("register", userId); 
     });
 
-    // دریافت داده‌های اولیه‌ی کاربر از Redis
     socket.on("user-data", (data) => {
-      console.log("📦 User data received:", data);
+      console.log("User data received:", data);
 
       if (Array.isArray(data)) {
         const formatted = data.map((event, index) =>
@@ -40,7 +39,6 @@
       }
     });
 
-    // دریافت رویداد جدید (real-time) برای دستگاه کاربر
     socket.on("device-event", (data) => {
       console.log("⚡ Event received:", data);
 
