@@ -32,7 +32,9 @@ const processMessage = async (msg) => {
       device_id: data.device_id,
     });
 
-    channel.ack(msg);
+     if (channel && msg) {
+      channel.ack(msg);
+    }
     console.log("Processed:",data);
       const mongoId=savedEvent._id
     await cacheService.cacheEvent(mongoId, {

@@ -1,31 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>Real-time Test</title>
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 </head>
 <body>
   <h2>📡 Real-time Event Listener</h2>
-  <pre id="output">Waiting for data...</pre>
+
+  <h3>داده‌های اولیه کاربر از Redis:</h3>
+  <pre id="userData">در حال دریافت داده‌ها...</pre>
+
+  <h3>رویدادهای دستگاه (Real-time):</h3>
+  <pre id="output">در انتظار داده‌ها...</pre>
 
   <script>
-    const socket = io("http://localhost:5000"); // آدرس سوکت‌ات
+    const socket = io("http://localhost:5000"); // آدرس سرور ساکت
 
-    const userId = 1; // اینو با user_id که در POST می‌فرستی یکی کن
+    const userId = 1; // مقدار باید با user_id واقعی تطابق داشته باشد
 
     socket.on("connect", () => {
-      console.log("Connected to server via Socket.io");
-      socket.emit("register", userId); 
+      console.log("✅ Connected to server via Socket.io");
+      socket.emit("register", userId); // ارسال userId برای ثبت‌نام در Redis
     });
 
+    // دریافت داده‌های اولیه‌ی کاربر از Redis
+    socket.on("user-data", (data) => {
+      console.log("📦 User data received:", data);
+
+      if (Array.isArray(data)) {
+        const formatted = data.map((event, index) =>
+          `${index + 1}:\n${JSON.stringify(event, null, 2)}`
+        ).join("\n\n");
+
+        document.getElementById("userData").textContent = formatted;
+      } else {
+        document.getElementById("userData").textContent =
+          JSON.stringify(data, null, 2) || "داده‌ای یافت نشد";
+      }
+    });
+
+    // دریافت رویداد جدید (real-time) برای دستگاه کاربر
     socket.on("device-event", (data) => {
-      console.log(" Event received:", data);
-      document.getElementById("output").textContent += "\n" + JSON.stringify(data, null, 2);
+      console.log("⚡ Event received:", data);
+
+      const output = document.getElementById("output");
+      output.textContent += `\n\n${JSON.stringify(data, null, 2)}`;
     });
   </script>
 </body>
 </html>
 
-
-
-<!-- جهت وارد کردن داده در پست من میتوانید از user_id=1,device_id=1 استفاده کنید-->
